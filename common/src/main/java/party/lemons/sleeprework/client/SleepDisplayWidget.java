@@ -29,10 +29,10 @@ public class SleepDisplayWidget extends AbstractWidget
         MutableComponent component = getTiredness();
         if(SleepRework.CONFIG.clientConfig.showTutorial)
         {
-            int sleepPerc = (int)(SleepRework.CONFIG.playerConfig.minSleepLevel * 100F);
-            int phantPerc = (int)(SleepRework.CONFIG.phantomConfig.phantomSpawnTiredness * 100F);
+            //int sleepPerc = (int)(SleepRework.CONFIG.playerConfig.minSleepLevel * 100F);
+            int phantPerc = (int)((SleepRework.CONFIG.phantomConfig.phantomSpawnTiredness / SleepRework.CONFIG.playerConfig.minSleepLevel) * 100);
 
-            component = component.append(Component.translatable("sleeprework.tutorial", sleepPerc, phantPerc).withStyle(ChatFormatting.ITALIC));
+            component = component.append(Component.translatable("sleeprework.tutorial", "100", phantPerc).withStyle(ChatFormatting.ITALIC));
             component = component.append(Component.translatable("sleeprework.tutorial.hide", Minecraft.getInstance().options.keyAttack.getTranslatedKeyMessage().copy().withStyle(ChatFormatting.RED)).withStyle(ChatFormatting.GRAY));
         }
 
@@ -166,8 +166,11 @@ public class SleepDisplayWidget extends AbstractWidget
         return 0F + ((1F - 0F) / (max - min)) * (current - min);
     }
 
-    private MutableComponent getTiredness() {
-        return Component.translatable("sleeprework.display.tiredness", (int) (SleepRework.localSleepData.getTiredness() * 100));
+    private MutableComponent getTiredness()
+    {
+        float currentPerc = SleepRework.localSleepData.getTiredness() / SleepRework.CONFIG.playerConfig.minSleepLevel;
+
+        return Component.translatable("sleeprework.display.tiredness", (int) (currentPerc * 100));
     }
 
     @Override
