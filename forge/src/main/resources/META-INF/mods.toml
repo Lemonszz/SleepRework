@@ -1,0 +1,35 @@
+modLoader = "javafml"
+loaderVersion = "[45,)"
+#issueTrackerURL = ""
+license = "MIT"
+
+[[mods]]
+modId = "sleeprework"
+version = "${version}"
+displayName = "Sleep Rework"
+authors = "Lemons"
+description = '''
+Sleep Rework Mod
+'''
+#logoFile = ""
+
+[[dependencies.sleeprework]]
+modId = "forge"
+mandatory = true
+versionRange = "[45,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.sleeprework]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.20.0,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.examplemod]]
+modId = "architectury"
+mandatory = true
+versionRange = "[9.0.0,)"
+ordering = "AFTER"
+side = "BOTH"

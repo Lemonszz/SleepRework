@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "sleeprework",
+  "version": "${version}",
+  "name": "Sleep Rework",
+  "description": "Sleep Rework Mod",
+  "authors": [
+    "Lemons"
+  ],
+  "license": "MIT",
+  "icon": "assets/examplemod/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "party.lemons.sleeprework.fabric.SleepReworkFabric"
+    ],
+    "client": [
+      "party.lemons.sleeprework.fabric.SleepReworkFabricClient"
+    ]
+  },
+  "mixins": [
+    "sleep-rework.mixins.json",
+    "sleep-rework-common.mixins.json"
+  ],
+  "depends": {
+    "fabric": "*",
+    "minecraft": ">=1.20.0",
+    "architectury": ">=9.0.0"
+  }
+}
