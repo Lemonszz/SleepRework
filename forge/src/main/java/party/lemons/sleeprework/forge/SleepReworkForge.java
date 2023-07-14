@@ -9,6 +9,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
+import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import party.lemons.sleeprework.SleepRework;
@@ -22,6 +23,7 @@ public class SleepReworkForge {
         SleepRework.init();
 
         MinecraftForge.EVENT_BUS.addListener(SleepReworkForge::onSleepEvent);
+        MinecraftForge.EVENT_BUS.addListener(SleepReworkForge::onStopSleep);
 
         EnvExecutor.runInEnv(Dist.CLIENT, ()-> SleepReworkClient::init);
     }
@@ -32,6 +34,15 @@ public class SleepReworkForge {
         {
             event.getEntity().displayClientMessage(Component.translatable("sleeprework.sleep.not_tired"), true);
             event.setResult(Player.BedSleepingProblem.NOT_POSSIBLE_HERE);
+        }
+    }
+
+    public static void onStopSleep(PlayerWakeUpEvent event)
+    {
+        if(!event.getEntity().level().isClientSide())
+        {
+            System.out.println("STOP SLEEP");
+            ServerHandler.resetTimeout((ServerPlayer) event.getEntity());
         }
     }
 }

@@ -2,6 +2,7 @@ package party.lemons.sleeprework.handler;
 
 import dev.architectury.event.events.common.PlayerEvent;
 import dev.architectury.event.events.common.TickEvent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -66,6 +67,21 @@ public class ServerHandler
                 return;
 
             phantomSpawner.tick(level);
+        }
+
+        //Loop through all players, checking to see if they've slept long enough to timeout
+        for(ServerPlayer player : level.players())
+        {
+            if(player.isSleeping())
+            {
+                if(tickSleepTimeout(player))
+                {
+                    player.stopSleeping();
+                    handleWakeUp(player);
+
+                    player.displayClientMessage(Component.translatable("sleeprework.sleep.timeout"), true);
+                }
+            }
         }
     }
 
@@ -137,9 +153,20 @@ public class ServerHandler
         ((SleepDataHolder)player).getSleepData().resetTiredness(player);
     }
 
+    public static void resetTimeout(ServerPlayer player)
+    {
+        ((SleepDataHolder)player).getSleepData().resetTimeout(player);
+    }
+
+    private static boolean tickSleepTimeout(ServerPlayer player)
+    {
+        return ((SleepDataHolder)player).getSleepData().tickTimeout(player);
+    }
+
     public static void handleWakeUp(ServerPlayer player)
     {
         resetTiredness(player);
+        resetTimeout(player);
 
         for(MobEffectInstance instance : SleepRework.CONFIG.playerConfig.wakeUpEffects)
         {
@@ -148,6 +175,11 @@ public class ServerHandler
                 player.addEffect(new MobEffectInstance(instance));
             }
         }
+    }
+
+    public static void handleStopSleeping(ServerPlayer player)
+    {
+        resetTimeout(player);
     }
 
     public static void syncJoin(ServerPlayer player)

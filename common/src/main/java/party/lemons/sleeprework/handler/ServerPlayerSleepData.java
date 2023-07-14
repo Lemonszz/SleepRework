@@ -25,6 +25,17 @@ public class ServerPlayerSleepData extends PlayerSleepData
         setTiredness(player, tiredness + increase);
     }
 
+    public boolean tickTimeout(ServerPlayer player)
+    {
+        sleepTimeout += 1;
+        if(sleepTimeout >= SleepRework.CONFIG.playerConfig.sleepTimeout)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     /*
         Gets the level of tiredness to increase for a player
         TODO: hook for other mods?
@@ -56,6 +67,11 @@ public class ServerPlayerSleepData extends PlayerSleepData
     public void resetTiredness(ServerPlayer serverPlayer)
     {
         setTiredness(serverPlayer, 0);
+    }
+
+    public void resetTimeout(ServerPlayer player)
+    {
+        sleepTimeout = 0;
     }
 
     @Override

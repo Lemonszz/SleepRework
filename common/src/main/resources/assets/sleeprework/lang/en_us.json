@@ -6,6 +6,7 @@
   "sleeprework.tutorial": "\n\nThis is your tiredness level. Once it reaches %1$s%%, you will be able to sleep.\nWhen it reaches %2$s%%, Phantoms will spawn",
   "sleeprework.tutorial.hide": "\nPress [%s] to close this message",
   "sleeprework.display.tiredness": "Tiredness: %s%%",
+  "sleeprework.sleep.timeout": "You have slept long enough to feel rested",
 
   "effect.sleeprework.liveliness": "Liveliness",
   "item.minecraft.tipped_arrow.effect.liveliness": "Arrow of Liveliness",
