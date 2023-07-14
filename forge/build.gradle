@@ -61,6 +61,7 @@ remapJar {
 
 jar {
     archiveClassifier.set("dev")
+    setArchivesBaseName("sleeprework-FORGE");
 }
 
 sourcesJar {

@@ -8,7 +8,7 @@
     "Lemons"
   ],
   "license": "MIT",
-  "icon": "assets/examplemod/icon.png",
+  "icon": "assets/sleeprework/icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [

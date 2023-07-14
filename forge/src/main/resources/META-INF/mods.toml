@@ -11,7 +11,7 @@ authors = "Lemons"
 description = '''
 Sleep Rework Mod
 '''
-#logoFile = ""
+logoFile = "assets/taniwha/icon.png"
 
 [[dependencies.sleeprework]]
 modId = "forge"
