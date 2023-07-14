@@ -37,9 +37,7 @@ public class SleepRework
     public static void init()
     {
         CONFIG = SleepReworkConfig.loadConfig();
-        TickEvent.SERVER_PRE.register(ServerHandler::serverTick);
-        TickEvent.SERVER_LEVEL_POST.register(ServerHandler::levelTick);
-        PlayerEvent.PLAYER_JOIN.register(ServerHandler::syncJoin);
+        ServerHandler.init();
 
         CommandRegistrationEvent.EVENT.register(TiredCommand::register);
 

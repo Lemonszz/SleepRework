@@ -12,6 +12,10 @@ import party.lemons.sleeprework.network.SyncTirednessMessage;
 
 public class ServerPlayerSleepData extends PlayerSleepData
 {
+    /*
+        Server player Sleep data.
+     */
+
     protected float sleepTimeout = 0.0F;
 
     public void increaseTiredness(ServerPlayer player)
@@ -21,9 +25,16 @@ public class ServerPlayerSleepData extends PlayerSleepData
         setTiredness(player, tiredness + increase);
     }
 
+    /*
+        Gets the level of tiredness to increase for a player
+        TODO: hook for other mods?
+     */
     public float getTirednessIncrease(ServerPlayer player)
     {
         float increase = SleepRework.CONFIG.playerConfig.tirednessIncreasePerMinute;
+
+        //Handle potions
+        //TODO: What if there's a TirednessModifierEffect that isn't Drowsiness or Liveliness?
         if(player.hasEffect(SleepReworkPotions.DROWSINESS.get()))
         {
             MobEffectInstance instance = player.getEffect(SleepReworkPotions.DROWSINESS.get());

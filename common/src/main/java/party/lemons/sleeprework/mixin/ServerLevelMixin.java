@@ -17,6 +17,10 @@ import java.util.function.BooleanSupplier;
 @Mixin(ServerLevel.class)
 public class ServerLevelMixin {
 
+    /*
+        Controls handle wake up, since Fabric/Forge APIs count cancelling as waking up
+     */
+
     @Shadow @Final
     List<ServerPlayer> players;
 

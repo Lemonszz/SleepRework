@@ -7,6 +7,9 @@ import party.lemons.sleeprework.SleepRework;
 
 public class PlayerSleepData
 {
+    /*
+        Main player Sleep data. A local copy is held by the Client and a ServerPlayerSleepData instance for each player on the server
+     */
     protected float tiredness = 0.0F;
 
     public boolean canSleep()

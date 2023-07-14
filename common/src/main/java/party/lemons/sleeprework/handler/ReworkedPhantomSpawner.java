@@ -19,34 +19,45 @@ public class ReworkedPhantomSpawner
     public void tick(ServerLevel level)
     {
         RandomSource rand = level.random;
-        if (level.getSkyDarken() >= 5 || !level.dimensionType().hasSkyLight()) {
-            for (ServerPlayer player : level.players()) {
-                if (ServerHandler.playerSpawnsPhantoms(player)) {
-                    BlockPos playerPosition = player.blockPosition();
-                    if (!level.dimensionType().hasSkyLight() || playerPosition.getY() >= level.getSeaLevel() && level.canSeeSky(playerPosition)) {
-                        DifficultyInstance localDifficulty = level.getCurrentDifficultyAt(playerPosition);
-                        if (localDifficulty.isHarderThan(rand.nextFloat() * 3.0F)) {
-                            float tiredness = ServerHandler.getPlayerTiredness(player);
+        if (level.getSkyDarken() >= 5 || !level.dimensionType().hasSkyLight())  //If the dimension has sky light && if the sky is dark enough (TODO: config?)
+        {
+            for (ServerPlayer player : level.players())     //Loop each player in the world
+            {
+                if (!ServerHandler.playerSpawnsPhantoms(player)) //If the player can't spawn phantoms, skip
+                    continue;
 
-                            if ((tiredness * rand.nextFloat()) * 100 >= (SleepRework.CONFIG.phantomConfig.phantomSpawnTiredness) * 100F) {
-                                BlockPos spawnPosition = playerPosition.above(20 + rand.nextInt(15)).east(-10 + rand.nextInt(21)).south(-10 + rand.nextInt(21));
-                                BlockState currentState = level.getBlockState(spawnPosition);
-                                FluidState currentFluid = level.getFluidState(spawnPosition);
-                                if (NaturalSpawner.isValidEmptySpawnBlock(level, spawnPosition, currentState, currentFluid, EntityType.PHANTOM)) {
-                                    SpawnGroupData spawnGroupData = null;
+                BlockPos playerPosition = player.blockPosition();
 
-                                    float tiredCheckLevel = tiredness + ((localDifficulty.getDifficulty().getId() + 1F) / 10);
-                                    int phantomCount = getSpawnCount(tiredCheckLevel, rand);
+                if (!level.dimensionType().hasSkyLight() || playerPosition.getY() >= level.getSeaLevel() && level.canSeeSky(playerPosition))    //If the player is above sea level and can see the sky
+                {
+                    DifficultyInstance difficulty = level.getCurrentDifficultyAt(playerPosition);
 
-                                    for (int i = 0; i < phantomCount; ++i)
-                                    {
-                                        Phantom phantom = EntityType.PHANTOM.create(level);
-                                        if (phantom != null) {
-                                            phantom.moveTo(spawnPosition, 0.0F, 0.0F);
-                                            spawnGroupData = phantom.finalizeSpawn(level, localDifficulty, MobSpawnType.NATURAL, spawnGroupData, null);
-                                            level.addFreshEntityWithPassengers(phantom);
-                                            ++i;
-                                        }
+                    if (difficulty.isHarderThan(rand.nextFloat() * 3.0F))   //If we're hard enough to spawn
+                    {
+                        //If the player's tiredness is enough to spawn phantoms
+                        float tiredness = ServerHandler.getPlayerTiredness(player);
+                        if ((tiredness * rand.nextFloat()) * 100 >= (SleepRework.CONFIG.phantomConfig.phantomSpawnTiredness) * 100F)
+                        {
+                            //Find valid position, if found, continue to spawn
+                            BlockPos spawnPosition = playerPosition.above(20 + rand.nextInt(15)).east(-10 + rand.nextInt(21)).south(-10 + rand.nextInt(21));
+                            BlockState currentState = level.getBlockState(spawnPosition);
+                            FluidState currentFluid = level.getFluidState(spawnPosition);
+                            if (NaturalSpawner.isValidEmptySpawnBlock(level, spawnPosition, currentState, currentFluid, EntityType.PHANTOM)) {
+                                SpawnGroupData spawnGroupData = null;
+
+                                //Adjust the tiredness with the difficulty to get more phantoms if harder
+                                float tiredCheckLevel = tiredness + ((difficulty.getDifficulty().getId() + 1F) / 10);
+                                int phantomCount = getSpawnCount(tiredCheckLevel, rand);    //Phantom spawn count
+
+                                //Spawn phantoms
+                                for (int i = 0; i < phantomCount; ++i)
+                                {
+                                    Phantom phantom = EntityType.PHANTOM.create(level);
+                                    if (phantom != null) {
+                                        phantom.moveTo(spawnPosition, 0.0F, 0.0F);
+                                        spawnGroupData = phantom.finalizeSpawn(level, difficulty, MobSpawnType.NATURAL, spawnGroupData, null);
+                                        level.addFreshEntityWithPassengers(phantom);
+                                        ++i;
                                     }
                                 }
                             }
@@ -57,6 +68,9 @@ public class ReworkedPhantomSpawner
         }
     }
 
+    /*
+        Gets the amount of phantoms to spawn for the tiredness level
+     */
     public int getSpawnCount(float tiredness, RandomSource randomSource)
     {
         float p = 1F + ((tiredness * 100F) - SleepRework.CONFIG.phantomConfig.phantomSpawnTiredness);

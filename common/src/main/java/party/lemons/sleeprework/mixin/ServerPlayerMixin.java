@@ -13,6 +13,10 @@ import party.lemons.sleeprework.handler.SleepDataHolder;
 @Mixin(ServerPlayer.class)
 public class ServerPlayerMixin implements SleepDataHolder {
 
+    /*
+        Attaches ServerPlayerSleepData to player.
+     */
+
     @Unique
     private final ServerPlayerSleepData sleepData = new ServerPlayerSleepData();
 
@@ -39,17 +43,5 @@ public class ServerPlayerMixin implements SleepDataHolder {
             sleepData.syncTo(((ServerPlayer)(Object)this));
         }
     }
-
-    /*
-    @Inject(method = "startSleepInBed", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;isCreative()Z"), cancellable = true)
-    private void startSleepInBed(BlockPos blockPos, CallbackInfoReturnable<Either<Player.BedSleepingProblem, Unit>> cbi)
-    {
-        if(!ServerHandler.canPlayerSleep(((ServerPlayer)(Object)this)))
-        {
-            ((ServerPlayer)(Object)this).displayClientMessage(Component.translatable("sleeprework.sleep.not_tired"), true);
-            cbi.setReturnValue(Either.left(Player.BedSleepingProblem.NOT_POSSIBLE_HERE));
-        }
-    }*/
-
     private static final String TAG_SLEEP_DATA = "SR_SleepData";
 }

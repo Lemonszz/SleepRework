@@ -8,6 +8,9 @@ import party.lemons.sleeprework.client.SleepDisplayWidget;
 
 public class ClientHandler
 {
+    /*
+        Adds sleep widget to inventory screen
+     */
     public static void addSleepWidget(InventoryScreen inventoryScreen, ScreenAccess screen)
     {
         int xx = ((AbstractContainerScreenAccess)inventoryScreen).getLeft() + SleepRework.CONFIG.clientConfig.iconX;
