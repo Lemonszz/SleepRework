@@ -28,7 +28,7 @@ public class ServerPlayerSleepData extends PlayerSleepData
     public boolean tickTimeout(ServerPlayer player)
     {
         sleepTimeout += 1;
-        if(sleepTimeout >= SleepRework.CONFIG.playerConfig.sleepTimeout)
+        if(sleepTimeout >= SleepRework.CONFIG.playerConfig().sleepTimeout())
         {
             return true;
         }
@@ -42,7 +42,7 @@ public class ServerPlayerSleepData extends PlayerSleepData
      */
     public float getTirednessIncrease(ServerPlayer player)
     {
-        float increase = SleepRework.CONFIG.playerConfig.tirednessIncreasePerMinute;
+        float increase = SleepRework.CONFIG.playerConfig().tirednessIncreasePerMinute();
 
         //Handle potions
         //TODO: What if there's a TirednessModifierEffect that isn't Drowsiness or Liveliness?
@@ -77,7 +77,7 @@ public class ServerPlayerSleepData extends PlayerSleepData
     @Override
     public void setTiredness(@Nullable Player player, float value)
     {
-        tiredness = Mth.clamp(value, 0.0F, SleepRework.CONFIG.playerConfig.maxTiredness);
+        tiredness = Mth.clamp(value, 0.0F, SleepRework.CONFIG.playerConfig().maxTiredness());
 
         if(player != null)
             syncTo((ServerPlayer) player);

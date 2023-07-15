@@ -27,9 +27,9 @@ public class SleepDisplayWidget extends AbstractWidget
     public Tooltip createTooltip()
     {
         MutableComponent component = getTiredness();
-        if(SleepRework.CONFIG.clientConfig.showTutorial)
+        if(SleepRework.CONFIG.clientConfig().showTutorial().get())
         {
-            int phantPerc = (int)((SleepRework.CONFIG.phantomConfig.phantomSpawnTiredness / SleepRework.CONFIG.playerConfig.minSleepLevel) * 100);
+            int phantPerc = (int)((SleepRework.CONFIG.phantomConfig().phantomSpawnTiredness() / SleepRework.CONFIG.playerConfig().minSleepLevel()) * 100);
 
             component = component.append(Component.translatable("sleeprework.tutorial", "100", phantPerc).withStyle(ChatFormatting.ITALIC));
             component = component.append(Component.translatable("sleeprework.tutorial.hide", Minecraft.getInstance().options.keyAttack.getTranslatedKeyMessage().copy().withStyle(ChatFormatting.RED)).withStyle(ChatFormatting.GRAY));
@@ -40,8 +40,8 @@ public class SleepDisplayWidget extends AbstractWidget
 
     @Override
     public void onClick(double d, double e) {
-        if(SleepRework.CONFIG.clientConfig.showTutorial) {
-            SleepRework.CONFIG.clientConfig.showTutorial = false;
+        if(SleepRework.CONFIG.clientConfig().showTutorial().get()) {
+            SleepRework.CONFIG.clientConfig().showTutorial().set(false);
             setTooltip(createTooltip());
 
             SleepReworkConfig.writeConfig(SleepRework.CONFIG);
@@ -64,21 +64,21 @@ public class SleepDisplayWidget extends AbstractWidget
         else
         {
 
-            if(SleepRework.CONFIG.clientConfig.doRecolor) {
+            if(SleepRework.CONFIG.clientConfig().doRecolor()) {
                 int c1, c2;
                 float ratio;
-                if (sleepLevel <= SleepRework.CONFIG.playerConfig.minSleepLevel) {
-                    c1 = SleepRework.CONFIG.clientConfig.color_1;
-                    c2 = SleepRework.CONFIG.clientConfig.color_2;
-                    ratio = mapValue(0, SleepRework.CONFIG.playerConfig.minSleepLevel, sleepLevel);
-                } else if (sleepLevel < SleepRework.CONFIG.phantomConfig.phantomSpawnTiredness) {
-                    c1 = SleepRework.CONFIG.clientConfig.color_2;
-                    c2 = SleepRework.CONFIG.clientConfig.color_3;
-                    ratio = mapValue(SleepRework.CONFIG.playerConfig.minSleepLevel, SleepRework.CONFIG.phantomConfig.phantomSpawnTiredness, sleepLevel);
+                if (sleepLevel <= SleepRework.CONFIG.playerConfig().minSleepLevel()) {
+                    c1 = SleepRework.CONFIG.clientConfig().color_1();
+                    c2 = SleepRework.CONFIG.clientConfig().color_2();
+                    ratio = mapValue(0, SleepRework.CONFIG.playerConfig().minSleepLevel(), sleepLevel);
+                } else if (sleepLevel < SleepRework.CONFIG.phantomConfig().phantomSpawnTiredness()) {
+                    c1 = SleepRework.CONFIG.clientConfig().color_2();
+                    c2 = SleepRework.CONFIG.clientConfig().color_3();
+                    ratio = mapValue(SleepRework.CONFIG.playerConfig().minSleepLevel(), SleepRework.CONFIG.phantomConfig().phantomSpawnTiredness(), sleepLevel);
                 } else {
-                    c1 = SleepRework.CONFIG.clientConfig.color_3;
-                    c2 = SleepRework.CONFIG.clientConfig.color_4;
-                    ratio = mapValue(SleepRework.CONFIG.phantomConfig.phantomSpawnTiredness, SleepRework.CONFIG.playerConfig.maxTiredness, sleepLevel);
+                    c1 = SleepRework.CONFIG.clientConfig().color_3();
+                    c2 = SleepRework.CONFIG.clientConfig().color_4();
+                    ratio = mapValue(SleepRework.CONFIG.phantomConfig().phantomSpawnTiredness(), SleepRework.CONFIG.playerConfig().maxTiredness(), sleepLevel);
                 }
 
                 int finalColor = interpolate(c1, c2, ratio);
@@ -167,7 +167,7 @@ public class SleepDisplayWidget extends AbstractWidget
 
     private MutableComponent getTiredness()
     {
-        float currentPerc = SleepRework.localSleepData.getTiredness() / SleepRework.CONFIG.playerConfig.minSleepLevel;
+        float currentPerc = SleepRework.localSleepData.getTiredness() / SleepRework.CONFIG.playerConfig().minSleepLevel();
 
         return Component.translatable("sleeprework.display.tiredness", (int) (currentPerc * 100));
     }

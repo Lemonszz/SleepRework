@@ -24,7 +24,7 @@ public class TiredCommand
                         .then(
                                 Commands.argument("Target", EntityArgument.players())
                                         .then(
-                                                Commands.argument("Value", IntegerArgumentType.integer(0, (int)(SleepRework.CONFIG.playerConfig.maxTiredness * 100)))
+                                                Commands.argument("Value", IntegerArgumentType.integer(0, (int)(SleepRework.CONFIG.playerConfig().maxTiredness() * 100)))
                                                         .then(
                                                                 Commands.literal("set").executes(TiredCommand::set)
                                                         )

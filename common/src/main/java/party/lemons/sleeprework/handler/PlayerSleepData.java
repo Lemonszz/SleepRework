@@ -14,12 +14,12 @@ public class PlayerSleepData
 
     public boolean canSleep()
     {
-        return tiredness >= SleepRework.CONFIG.playerConfig.minSleepLevel;
+        return tiredness >= SleepRework.CONFIG.playerConfig().minSleepLevel();
     }
 
     public boolean doesSpawnPhantoms()
     {
-        return SleepRework.CONFIG.phantomConfig.tirednessPhantoms && tiredness >= SleepRework.CONFIG.phantomConfig.phantomSpawnTiredness;
+        return SleepRework.CONFIG.phantomConfig().tirednessPhantoms() && tiredness >= SleepRework.CONFIG.phantomConfig().phantomSpawnTiredness();
     }
 
     public void save(CompoundTag tag)

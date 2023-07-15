@@ -36,7 +36,7 @@ public class ReworkedPhantomSpawner
                     {
                         //If the player's tiredness is enough to spawn phantoms
                         float tiredness = ServerHandler.getPlayerTiredness(player);
-                        if ((tiredness * rand.nextFloat()) * 100 >= (SleepRework.CONFIG.phantomConfig.phantomSpawnTiredness) * 100F)
+                        if ((tiredness * rand.nextFloat()) * 100 >= (SleepRework.CONFIG.phantomConfig().phantomSpawnTiredness()) * 100F)
                         {
                             //Find valid position, if found, continue to spawn
                             BlockPos spawnPosition = playerPosition.above(20 + rand.nextInt(15)).east(-10 + rand.nextInt(21)).south(-10 + rand.nextInt(21));
@@ -73,7 +73,7 @@ public class ReworkedPhantomSpawner
      */
     public int getSpawnCount(float tiredness, RandomSource randomSource)
     {
-        float p = 1F + ((tiredness * 100F) - SleepRework.CONFIG.phantomConfig.phantomSpawnTiredness);
+        float p = 1F + ((tiredness * 100F) - SleepRework.CONFIG.phantomConfig().phantomSpawnTiredness());
         float amt = (p / 100F) + randomSource.nextInt(0, (int)(p/100F));
 
         return (int)amt;

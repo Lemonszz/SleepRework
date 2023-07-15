@@ -13,8 +13,8 @@ public class ClientHandler
      */
     public static void addSleepWidget(InventoryScreen inventoryScreen, ScreenAccess screen)
     {
-        int xx = ((AbstractContainerScreenAccess)inventoryScreen).getLeft() + SleepRework.CONFIG.clientConfig.iconX;
-        int yy = ((AbstractContainerScreenAccess)inventoryScreen).getTop() + SleepRework.CONFIG.clientConfig.iconY;
+        int xx = ((AbstractContainerScreenAccess)inventoryScreen).getLeft() + SleepRework.CONFIG.clientConfig().iconX();
+        int yy = ((AbstractContainerScreenAccess)inventoryScreen).getTop() + SleepRework.CONFIG.clientConfig().iconY();
 
         SleepDisplayWidget sleepDisplayWidget = new SleepDisplayWidget(xx, yy);
         screen.addRenderableWidget(sleepDisplayWidget);

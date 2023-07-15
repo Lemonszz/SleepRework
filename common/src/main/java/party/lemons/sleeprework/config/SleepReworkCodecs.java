@@ -1,12 +1,16 @@
 package party.lemons.sleeprework.config;
 
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.world.effect.MobEffectInstance;
+import org.spongepowered.asm.mixin.injection.At;
 
-public class SleepReworkCodecs
-{
+import java.util.concurrent.atomic.AtomicBoolean;
+
+public class SleepReworkCodecs {
     public static Codec<MobEffectInstance> MOB_EFFECT_INSTANCE = RecordCodecBuilder.create(
             instance -> instance.group(
                     BuiltInRegistries.MOB_EFFECT.byNameCodec().fieldOf("effect").forGetter(MobEffectInstance::getEffect),
@@ -17,4 +21,6 @@ public class SleepReworkCodecs
                     Codec.BOOL.optionalFieldOf("show_icon", true).forGetter(MobEffectInstance::showIcon)
             ).apply(instance, MobEffectInstance::new)
     );
+
+    public static Codec<AtomicBoolean> ATOMIC_BOOL = Codec.BOOL.xmap(AtomicBoolean::new, AtomicBoolean::get);
 }

@@ -20,8 +20,8 @@ public class SleepReworkPotions
 {
     public static final DeferredRegister<MobEffect> MOB_EFFECTS = DeferredRegister.create(SleepRework.MODID, Registries.MOB_EFFECT);
     public static final DeferredRegister<Potion> POTIONS = DeferredRegister.create(SleepRework.MODID, Registries.POTION);
-    public static final RegistrySupplier<MobEffect> LIVELINESS = registerEffect("liveliness", ()->new TirednessModifierEffect(SleepRework.CONFIG.potionConfig.livelinessTirednessModifier, MobEffectCategory.BENEFICIAL, 0xddff00));
-    public static final RegistrySupplier<MobEffect> DROWSINESS = registerEffect("drowsiness", ()->new TirednessModifierEffect(SleepRework.CONFIG.potionConfig.drowsinessTirednessModifier, MobEffectCategory.HARMFUL, 0x3c2d5c));
+    public static final RegistrySupplier<MobEffect> LIVELINESS = registerEffect("liveliness", ()->new TirednessModifierEffect(SleepRework.CONFIG.potionConfig().livelinessTirednessModifier(), MobEffectCategory.BENEFICIAL, 0xddff00));
+    public static final RegistrySupplier<MobEffect> DROWSINESS = registerEffect("drowsiness", ()->new TirednessModifierEffect(SleepRework.CONFIG.potionConfig().drowsinessTirednessModifier(), MobEffectCategory.HARMFUL, 0x3c2d5c));
 
     public static final RegistrySupplier<Potion> LIVELINESS_POTION = registerPotion("liveliness", ()->new Potion(new MobEffectInstance(LIVELINESS.get(), 24000)));
     public static final RegistrySupplier<Potion> LONG_LIVELINESS_POTION = registerPotion("long_liveliness", ()->new Potion(new MobEffectInstance(LIVELINESS.get(), 36000)));
@@ -35,10 +35,8 @@ public class SleepReworkPotions
         MOB_EFFECTS.register();
         POTIONS.register();
 
-
-        //TODO: config item?
         LifecycleEvent.SETUP.register(()->{
-            PotionBrewingInvoker.callAddMix(Potions.AWKWARD, SleepRework.CONFIG.potionConfig.livelinessBrewingItem, LIVELINESS_POTION.get());
+            PotionBrewingInvoker.callAddMix(Potions.AWKWARD, SleepRework.CONFIG.potionConfig().livelinessBrewingItem(), LIVELINESS_POTION.get());
             PotionBrewingInvoker.callAddMix(LIVELINESS_POTION.get(), Items.REDSTONE, LONG_LIVELINESS_POTION.get());
             PotionBrewingInvoker.callAddMix(LIVELINESS_POTION.get(), Items.GLOWSTONE, STRONG_LIVELINESS_POTION.get());
 

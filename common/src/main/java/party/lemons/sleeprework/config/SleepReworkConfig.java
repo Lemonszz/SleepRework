@@ -25,28 +25,13 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-public class SleepReworkConfig
+public record SleepReworkConfig(PlayerConfig playerConfig, PhantomConfig phantomConfig, PotionConfig potionConfig, ServerConfig serverConfig, ClientConfig clientConfig)
 {
-    public PlayerConfig playerConfig;
-    public PhantomConfig phantomConfig;
-    public PotionConfig potionConfig;
-    public ServerConfig serverConfig;
-
-    public ClientConfig clientConfig;
-
     public SleepReworkConfig()
     {
         this(new PlayerConfig(), new PhantomConfig(), new PotionConfig(), new ServerConfig(), new ClientConfig());
-    }
-
-    public SleepReworkConfig(PlayerConfig playerConfig, PhantomConfig phantomConfig, PotionConfig potionConfig, ServerConfig serverConfig, ClientConfig clientConfig)
-    {
-        this.playerConfig = playerConfig;
-        this.phantomConfig = phantomConfig;
-        this.potionConfig = potionConfig;
-        this.serverConfig = serverConfig;
-        this.clientConfig = clientConfig;
     }
 
     public static Codec<SleepReworkConfig> CODEC = RecordCodecBuilder.create(
@@ -59,7 +44,7 @@ public class SleepReworkConfig
             ).apply(instance, SleepReworkConfig::new)
     );
 
-    public static class PlayerConfig
+    public record PlayerConfig(float tirednessIncreasePerMinute, float maxTiredness, float minSleepLevel, int sleepTimeout, List<MobEffectInstance> wakeUpEffects)
     {
         public static Codec<PlayerConfig> CODEC = RecordCodecBuilder.create(
                 instance -> instance.group(
@@ -75,24 +60,9 @@ public class SleepReworkConfig
         {
             this(0.025F, 5.0F, 1.0F, 400, List.of(new MobEffectInstance(MobEffects.REGENERATION, 100, 1, true,true)));
         }
-
-        public PlayerConfig(float tirednessIncreasePerMinute, float maxTiredness, float minSleepLevel, int sleepTimeout, List<MobEffectInstance> wakeUpEffects)
-        {
-            this.tirednessIncreasePerMinute = tirednessIncreasePerMinute;
-            this.maxTiredness = maxTiredness;
-            this.minSleepLevel = minSleepLevel;
-            this.sleepTimeout = sleepTimeout;
-            this.wakeUpEffects = wakeUpEffects;
-        }
-
-        public float tirednessIncreasePerMinute;
-        public float maxTiredness;
-        public float minSleepLevel;
-        public int sleepTimeout;
-        public List<MobEffectInstance> wakeUpEffects;
     }
 
-    public static class PhantomConfig
+    public record PhantomConfig(boolean tirednessPhantoms, float phantomSpawnTiredness)
     {
         public static Codec<PhantomConfig> CODEC = RecordCodecBuilder.create(
                 instance -> instance.group(
@@ -103,20 +73,11 @@ public class SleepReworkConfig
 
         public PhantomConfig()
         {
-            this.tirednessPhantoms = true;
-            this.phantomSpawnTiredness = 3.0F;
+            this(true, 3.0F);
         }
-
-        public PhantomConfig(boolean tirednessPhantoms, float phantomSpawnTiredness)
-        {
-            this.tirednessPhantoms = tirednessPhantoms;
-            this.phantomSpawnTiredness = phantomSpawnTiredness;
-        }
-        public boolean tirednessPhantoms;
-        public float phantomSpawnTiredness;
     }
 
-    public static class PotionConfig
+    public record PotionConfig(float livelinessTirednessModifier, float drowsinessTirednessModifier, Item livelinessBrewingItem)
     {
         public static Codec<PotionConfig> CODEC = RecordCodecBuilder.create(
                 instance -> instance.group(
@@ -130,19 +91,10 @@ public class SleepReworkConfig
         {
             this(0.5F, 2.0F, Items.HONEYCOMB);
         }
-        public PotionConfig(float livelinessTirednessModifier, float drowsinessTirednessModifier, Item livelinessBrewingItem)
-        {
-            this.livelinessTirednessModifier = livelinessTirednessModifier;
-            this.drowsinessTirednessModifier = drowsinessTirednessModifier;
-            this.livelinessBrewingItem = livelinessBrewingItem;
-        }
-        public float livelinessTirednessModifier;
-        public float drowsinessTirednessModifier;
-
-        public Item livelinessBrewingItem;
     }
 
-    public static class ServerConfig{
+    public record ServerConfig(boolean respectInsomniaGameRule)
+    {
         public static Codec<ServerConfig> CODEC = RecordCodecBuilder.create(
                 instance -> instance.group(
                         Codec.BOOL.fieldOf("respect_insomnia_game_rule").forGetter(c->c.respectInsomniaGameRule)
@@ -153,14 +105,10 @@ public class SleepReworkConfig
         {
             this(true);
         }
-        public ServerConfig(boolean respectInsomniaGameRule)
-        {
-            this.respectInsomniaGameRule = respectInsomniaGameRule;
-        }
-        public boolean respectInsomniaGameRule;
     }
 
-    public static class ClientConfig{
+    public record ClientConfig(int iconX, int iconY, int color_1, int color_2, int color_3, int color_4, boolean doRecolor, AtomicBoolean showTutorial)
+    {
         public static Codec<ClientConfig> CODEC = RecordCodecBuilder.create(
                 instance -> instance.group(
                         Codec.INT.fieldOf("icon_x").forGetter(c->c.iconX),
@@ -170,33 +118,14 @@ public class SleepReworkConfig
                         Codec.INT.fieldOf("color_3").forGetter(c->c.color_3),
                         Codec.INT.fieldOf("color_4").forGetter(c->c.color_4),
                         Codec.BOOL.fieldOf("do_recolor").forGetter(c->c.doRecolor),
-                        Codec.BOOL.fieldOf("show_tutorial").forGetter(c->c.showTutorial)
+                        SleepReworkCodecs.ATOMIC_BOOL.fieldOf("show_tutorial").forGetter(c->c.showTutorial)
                 ).apply(instance, ClientConfig::new)
         );
 
         public ClientConfig() {
-            this(80, 10, 0xffffff, 0xffdd00, 0xeb7434, 0xeb2d2d, true, true);
-        }
+            this(80, 10, 0xffffff, 0xffdd00, 0xeb7434, 0xeb2d2d, true, new AtomicBoolean(false));
 
-        public ClientConfig(int iconX, int iconY, int color_1, int color_2, int color_3, int color_4, boolean doRecolor, boolean showTutorial)
-        {
-            this.iconX = iconX;
-            this.iconY = iconY;
-            this.color_1 = color_1;
-            this.color_2 = color_2;
-            this.color_3 = color_3;
-            this.color_4 = color_4;
-            this.doRecolor = doRecolor;
-            this.showTutorial = showTutorial;
         }
-        public int iconX;
-        public int iconY;
-        public int color_1;
-        public int color_2;
-        public int color_3;
-        public int color_4;
-        public boolean doRecolor;
-        public boolean showTutorial;
     }
 
     public static SleepReworkConfig loadConfig()
