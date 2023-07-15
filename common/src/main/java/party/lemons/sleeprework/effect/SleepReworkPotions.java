@@ -38,7 +38,7 @@ public class SleepReworkPotions
 
         //TODO: config item?
         LifecycleEvent.SETUP.register(()->{
-            PotionBrewingInvoker.callAddMix(Potions.AWKWARD, Items.HONEYCOMB, LIVELINESS_POTION.get());
+            PotionBrewingInvoker.callAddMix(Potions.AWKWARD, SleepRework.CONFIG.potionConfig.livelinessBrewingItem, LIVELINESS_POTION.get());
             PotionBrewingInvoker.callAddMix(LIVELINESS_POTION.get(), Items.REDSTONE, LONG_LIVELINESS_POTION.get());
             PotionBrewingInvoker.callAddMix(LIVELINESS_POTION.get(), Items.GLOWSTONE, STRONG_LIVELINESS_POTION.get());
 

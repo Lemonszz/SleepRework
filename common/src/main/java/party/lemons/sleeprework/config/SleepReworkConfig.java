@@ -12,14 +12,19 @@ import dev.architectury.platform.Platform;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import party.lemons.sleeprework.SleepRework;
+import party.lemons.sleeprework.util.SleepReworkUtil;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SleepReworkConfig
 {
@@ -116,21 +121,25 @@ public class SleepReworkConfig
         public static Codec<PotionConfig> CODEC = RecordCodecBuilder.create(
                 instance -> instance.group(
                         Codec.FLOAT.fieldOf("liveliness_tiredness_modifier").forGetter(c->c.livelinessTirednessModifier),
-                        Codec.FLOAT.fieldOf("drowsiness_tiredness_modifier").forGetter(c->c.drowsinessTirednessModifier)
+                        Codec.FLOAT.fieldOf("drowsiness_tiredness_modifier").forGetter(c->c.drowsinessTirednessModifier),
+                        BuiltInRegistries.ITEM.byNameCodec().fieldOf("liveliness_brewing_item").forGetter(c->c.livelinessBrewingItem)
                 ).apply(instance, PotionConfig::new)
         );
 
         public PotionConfig()
         {
-            this(0.5F, 2.0F);
+            this(0.5F, 2.0F, Items.HONEYCOMB);
         }
-        public PotionConfig(float livelinessTirednessModifier, float drowsinessTirednessModifier)
+        public PotionConfig(float livelinessTirednessModifier, float drowsinessTirednessModifier, Item livelinessBrewingItem)
         {
             this.livelinessTirednessModifier = livelinessTirednessModifier;
             this.drowsinessTirednessModifier = drowsinessTirednessModifier;
+            this.livelinessBrewingItem = livelinessBrewingItem;
         }
         public float livelinessTirednessModifier;
         public float drowsinessTirednessModifier;
+
+        public Item livelinessBrewingItem;
     }
 
     public static class ServerConfig{
@@ -200,11 +209,10 @@ public class SleepReworkConfig
             try(FileReader reader = new FileReader(cfgFile))
             {
                 JsonElement json = gson.fromJson(reader, JsonElement.class);
-                DataResult<Pair<SleepReworkConfig, JsonElement>> configData = SleepReworkConfig.CODEC.decode(JsonOps.INSTANCE, json);
-                if(configData.error().isEmpty())
-                    return configData.result().get().getFirst();
-                else
-                    SleepRework.LOGGER.error(configData.error().get().message());
+                SleepReworkConfig config = attemptLoad(gson, json, true);
+
+                if(config != null)
+                    return config;
             }
             catch (IOException e)
             {
@@ -212,10 +220,45 @@ public class SleepReworkConfig
             }
         }
 
+        SleepRework.LOGGER.error("Unable to load Sleep Rework config, overwriting existing");
         SleepReworkConfig config = new SleepReworkConfig();
         writeConfig(config);
 
         return config;
+    }
+
+    public static SleepReworkConfig attemptLoad(Gson gson, JsonElement json, boolean allowRecursion)
+    {
+        DataResult<Pair<SleepReworkConfig, JsonElement>> configData = SleepReworkConfig.CODEC.decode(JsonOps.INSTANCE, json);
+        if(configData.error().isEmpty()) {  //If the config data has successfully loaded, return it
+            return configData.result().get().getFirst();
+        }
+        else {  //If it did no load successfully
+            SleepRework.LOGGER.error(configData.error().get().message());
+
+            //Create a known good config
+            SleepReworkConfig newConfig = new SleepReworkConfig();
+            DataResult<JsonElement> newConfigJson = SleepReworkConfig.CODEC.encodeStart(JsonOps.INSTANCE, newConfig);
+
+            //If the known good config is correct, merge bad and good and return the result
+            if(newConfigJson.error().isEmpty())
+            {
+                if(!allowRecursion)
+                    return null;
+
+                Map c1 = gson.fromJson(newConfigJson.get().left().get(), HashMap.class);
+                Map c2 = gson.fromJson(json, HashMap.class);
+
+                SleepReworkConfig fixedConfig = attemptLoad(gson, gson.toJsonTree(SleepReworkUtil.recursiveCollectionMerge(c1, c2)), false);
+                if(fixedConfig != null)
+                {
+                    SleepRework.LOGGER.info("Sleep Rework Config data fixed");
+                    writeConfig(fixedConfig);
+                }
+                return fixedConfig;
+            }
+            return null;    //Something has broken!!
+        }
     }
 
     public static void writeConfig(SleepReworkConfig config)
