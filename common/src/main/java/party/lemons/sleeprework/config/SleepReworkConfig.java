@@ -149,9 +149,10 @@ public record SleepReworkConfig(PlayerConfig playerConfig, PhantomConfig phantom
             {
                 e.printStackTrace();
             }
+
+            SleepRework.LOGGER.error("Unable to load Sleep Rework config, overwriting existing");
         }
 
-        SleepRework.LOGGER.error("Unable to load Sleep Rework config, overwriting existing");
         SleepReworkConfig config = new SleepReworkConfig();
         writeConfig(config);
 
