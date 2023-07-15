@@ -62,19 +62,20 @@ public record SleepReworkConfig(PlayerConfig playerConfig, PhantomConfig phantom
         }
     }
 
-    public record PhantomConfig(boolean tirednessPhantoms, float phantomSpawnTiredness, boolean disableVanillaPhantomSpawner)
+    public record PhantomConfig(boolean tirednessPhantoms, float phantomSpawnTiredness, int requiredSkyDarken, boolean disableVanillaPhantomSpawner)
     {
         public static Codec<PhantomConfig> CODEC = RecordCodecBuilder.create(
                 instance -> instance.group(
                         Codec.BOOL.fieldOf("tiredness_phantoms").forGetter(c->c.tirednessPhantoms),
                         Codec.FLOAT.fieldOf("phantom_spawn_tiredness").forGetter(c->c.phantomSpawnTiredness),
+                        Codec.INT.fieldOf("spawn_required_sky_darken").forGetter(c->c.requiredSkyDarken),
                         Codec.BOOL.fieldOf("disable_vanilla_phantom_spawner").forGetter(c->c.disableVanillaPhantomSpawner)
                 ).apply(instance, PhantomConfig::new)
         );
 
         public PhantomConfig()
         {
-            this(true, 3.0F, true);
+            this(true, 3.0F, 5, true);
         }
     }
 

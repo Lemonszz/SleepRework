@@ -19,7 +19,7 @@ public class ReworkedPhantomSpawner
     public void tick(ServerLevel level)
     {
         RandomSource rand = level.random;
-        if (level.getSkyDarken() >= 5 || !level.dimensionType().hasSkyLight())  //If the dimension has sky light && if the sky is dark enough (TODO: config?)
+        if (level.getSkyDarken() >= SleepRework.CONFIG.phantomConfig().requiredSkyDarken() || !level.dimensionType().hasSkyLight())  //If the dimension has sky light && if the sky is dark enough (TODO: config?)
         {
             for (ServerPlayer player : level.players())     //Loop each player in the world
             {
